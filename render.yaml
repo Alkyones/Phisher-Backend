@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: phishing-detector-backend
+    env: go
+    region: frankfurt # European region
+    plan: starter # or professional for production
+    buildCommand: go build -o server .
+    startCommand: ./server
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_NAME
+        value: phishing_detector
+      - key: CORS_ORIGINS
+        value: "*"
+      - key: RATE_LIMIT
+        value: 100
+      - key: CACHE_TIMEOUT
+        value: 1h
+      - key: LOG_LEVEL
+        value: info
+      - key: ENABLE_METRICS
+        value: true
+      - key: AI_MODEL_NAME
+        value: gemini-1.5-flash
+      # These will be set manually in Render dashboard
+      # - OPENAI_API_KEY (your Google Gemini API key)
+      # - MONGO_URI (your MongoDB connection string)

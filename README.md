@@ -198,6 +198,28 @@ Phisher-Backend/
 
 ### Deployment Options
 
+#### Render (Recommended)
+1. **Fork this repository** to your GitHub account
+
+2. **Set up MongoDB Atlas**:
+   - Create account at [MongoDB Atlas](https://www.mongodb.com/atlas)
+   - Create a new cluster (free tier available)
+   - Get connection string: `mongodb+srv://<username>:<password>@<cluster>.mongodb.net/phishing_detector`
+
+3. **Deploy to Render**:
+   - Sign up at [Render](https://render.com)
+   - Connect your GitHub account
+   - Click "New +" → "Web Service"
+   - Choose your forked repository
+   - Render will auto-detect the `render.yaml` configuration
+
+4. **Set Environment Variables** in Render Dashboard:
+   - `OPENAI_API_KEY`: Your Google Gemini API key
+   - `MONGO_URI`: Your MongoDB Atlas connection string
+   - Other variables are configured in `render.yaml`
+
+5. **Deploy**: Click "Create Web Service"
+
 #### Cloud Platforms
 - **Google Cloud Run** (Serverless, auto-scaling)
 - **AWS ECS/Fargate** (Container orchestration)
