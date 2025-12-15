@@ -14,18 +14,20 @@ services:
         value: production
       - key: DATABASE_NAME
         value: phishing_detector
-      - key: CORS_ORIGINS
-        value: "*"
       - key: RATE_LIMIT
         value: 100
-      - key: CACHE_TIMEOUT
-        value: 1h
+      - key: CACHE_TIMEOUT_MINUTES
+        value: 5
       - key: LOG_LEVEL
         value: info
       - key: ENABLE_METRICS
         value: true
       - key: AI_MODEL_NAME
-        value: gemini-1.5-flash
-      # These will be set manually in Render dashboard
+        value: gemini-2.5-flash
+      - key: MAX_URL_LENGTH
+        value: 2048
+      - key: ALLOWED_ORIGINS
+        value: "*"
+      # These will be set manually in Render dashboard:
       # - OPENAI_API_KEY (your Google Gemini API key)
-      # - MONGO_URI (your MongoDB connection string)
+      # - MONGODB_URI (your MongoDB connection string)
