@@ -1,0 +1,36 @@
+# Phishing URL Detector Backend
+
+## Ignore compiled binaries and development files
+bin/
+*.exe
+server
+
+## Database files (will be created automatically)
+*.db
+*.sqlite
+*.sqlite3
+
+## Environment files with secrets
+.env
+
+## Development/Testing files
+test_*
+*_test.db
+debug.log
+
+## OS generated files
+.DS_Store
+Thumbs.db
+
+## Go specific
+vendor/
+
+## IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+## Logs
+*.log
+logs/
