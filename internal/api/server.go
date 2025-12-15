@@ -3,7 +3,6 @@ package api
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"fmt"
 	"net/http"
 	"phishing-detector/internal/config"
 	"phishing-detector/internal/services"
@@ -149,9 +148,6 @@ func (s *Server) analyzeURL(c *gin.Context) {
 	// Only generate UserID if not provided by client
 	if req.UserID == "" {
 		req.UserID = s.generateUserID(clientIP, userAgent)
-		fmt.Printf("🔑 Generated UserID: %s (from IP: %s, UA: %s)\n", req.UserID, clientIP, userAgent)
-	} else {
-		fmt.Printf("🔑 Using provided UserID: %s\n", req.UserID)
 	}
 
 	// Perform analysis

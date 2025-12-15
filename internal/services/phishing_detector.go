@@ -77,7 +77,6 @@ func (s *PhishingDetectorService) AnalyzeURL(ctx context.Context, req AnalysisRe
 	// Check if domain is whitelisted - skip analysis if it is
 	isWhitelisted, err := s.IsWhitelisted(ctx, req.UserID, domain)
 	if err != nil {
-		fmt.Printf("Error checking whitelist: %v\n", err)
 		// Continue with analysis even if whitelist check fails
 	}
 
@@ -99,7 +98,6 @@ func (s *PhishingDetectorService) AnalyzeURL(ctx context.Context, req AnalysisRe
 	// Check if domain is blacklisted - return threat result immediately
 	isBlacklisted, err := s.IsBlacklisted(ctx, req.UserID, domain)
 	if err != nil {
-		fmt.Printf("Error checking blacklist: %v\n", err)
 		// Continue with analysis even if blacklist check fails
 	}
 
@@ -186,7 +184,7 @@ func (s *PhishingDetectorService) AnalyzeURL(ctx context.Context, req AnalysisRe
 	// Fall back to rule-based analysis if AI fails
 	if result == nil || aiErr != nil {
 		if aiErr != nil {
-			fmt.Printf("AI analysis failed: %v, falling back to rule-based analysis\n", aiErr)
+			// AI analysis failed, fallback to rule-based analysis
 		}
 		result = s.aiService.FallbackAnalysis(aiRequest)
 	}
@@ -220,7 +218,8 @@ func (s *PhishingDetectorService) AnalyzeURL(ctx context.Context, req AnalysisRe
 	// Store analysis in database
 	_, err = analysesCollection.InsertOne(ctx, analysis)
 	if err != nil {
-		fmt.Printf("Failed to store analysis: %v\n", err)
+		// Log error but don't fail the analysis
+		_ = err
 	}
 
 	// Update cache
@@ -276,7 +275,8 @@ func (s *PhishingDetectorService) updateDomainReputation(domain string, result *
 
 		_, err = domainsCollection.InsertOne(ctx, domainRep)
 		if err != nil {
-			fmt.Printf("Failed to create domain reputation: %v\n", err)
+			// Log error but don't fail the analysis
+			_ = err
 		}
 	} else if err == nil {
 		// Update existing domain reputation
@@ -325,7 +325,8 @@ func (s *PhishingDetectorService) updateDomainReputation(domain string, result *
 
 		_, err = domainsCollection.UpdateOne(ctx, filter, update)
 		if err != nil {
-			fmt.Printf("Failed to update domain reputation: %v\n", err)
+			// Log error but don't fail the analysis
+			_ = err
 		}
 	}
 }
@@ -361,7 +362,8 @@ func (s *PhishingDetectorService) updateMetrics(result *AIAnalysisResponse) {
 	opts := options.Update().SetUpsert(true)
 	_, err := metricsCollection.UpdateOne(ctx, filter, update, opts)
 	if err != nil {
-		fmt.Printf("Failed to update metrics: %v\n", err)
+		// Log error but don't fail the analysis
+		_ = err
 	}
 }
 
@@ -533,37 +535,28 @@ func (s *PhishingDetectorService) RemoveFromWhitelist(ctx context.Context, userI
 
 // checkDomainInList is a generic function to check if a domain exists in a domain list
 func (s *PhishingDetectorService) checkDomainInList(domains []string, domain, listType string) bool {
-	fmt.Printf("🔍 Checking domain in %s: domain='%s'\n", listType, domain)
-	fmt.Printf("📋 %s domains: %v\n", listType, domains)
-
 	// Normalize domain by removing www. prefix for comparison
 	normalizedDomain := s.normalizeDomain(domain)
-	fmt.Printf("🔄 Normalized input domain: '%s' -> '%s'\n", domain, normalizedDomain)
 
 	for _, listDomain := range domains {
 		normalizedListDomain := s.normalizeDomain(listDomain)
-		fmt.Printf("🔄 Comparing: normalized='%s' vs %s='%s' (original='%s')\n", normalizedDomain, listType, normalizedListDomain, listDomain)
 
 		// Check exact match
 		if normalizedListDomain == normalizedDomain {
-			fmt.Printf("✅ EXACT MATCH FOUND: '%s' == '%s'\n", normalizedListDomain, normalizedDomain)
 			return true
 		}
 
 		// Check if current domain is a subdomain of list domain
 		if strings.HasSuffix(normalizedDomain, "."+normalizedListDomain) {
-			fmt.Printf("✅ SUBDOMAIN MATCH FOUND: '%s' is subdomain of '%s'\n", normalizedDomain, normalizedListDomain)
 			return true
 		}
 
 		// Check if list domain is a subdomain of current domain
 		if strings.HasSuffix(normalizedListDomain, "."+normalizedDomain) {
-			fmt.Printf("✅ REVERSE SUBDOMAIN MATCH FOUND: '%s' is subdomain of '%s'\n", normalizedListDomain, normalizedDomain)
 			return true
 		}
 	}
 
-	fmt.Printf("❌ NO MATCH FOUND for domain '%s' in %s\n", domain, listType)
 	return false
 }
 
@@ -571,7 +564,6 @@ func (s *PhishingDetectorService) checkDomainInList(domains []string, domain, li
 func (s *PhishingDetectorService) IsWhitelisted(ctx context.Context, userID, domain string) (bool, error) {
 	domains, err := s.GetUserWhitelist(ctx, userID)
 	if err != nil {
-		fmt.Printf("❌ Error getting user whitelist: %v\n", err)
 		return false, err
 	}
 
@@ -607,7 +599,6 @@ func (s *PhishingDetectorService) RemoveFromBlacklist(ctx context.Context, userI
 func (s *PhishingDetectorService) IsBlacklisted(ctx context.Context, userID, domain string) (bool, error) {
 	domains, err := s.GetUserBlacklist(ctx, userID)
 	if err != nil {
-		fmt.Printf("❌ Error getting user blacklist: %v\n", err)
 		return false, err
 	}
 

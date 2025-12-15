@@ -27,7 +27,7 @@ func Load() *Config {
 		Port:           getEnvOrDefault("PORT", "8080"),
 		MongoURI:       getEnvOrDefault("MONGODB_URI", "mongodb://localhost:27017"),
 		DatabaseName:   getEnvOrDefault("DATABASE_NAME", "phishing_detector"),
-		OpenAIAPIKey:   getEnvOrDefault("OPENAI_API_KEY", ""),
+		OpenAIAPIKey:   getEnvOrDefault("OPENAI_API_KEY", ""), // Must be set by user
 		Environment:    getEnvOrDefault("ENVIRONMENT", "development"),
 		CorsOrigins:    []string{"chrome-extension://*", "http://localhost:*"},
 		RateLimit:      getEnvIntOrDefault("RATE_LIMIT", 100),

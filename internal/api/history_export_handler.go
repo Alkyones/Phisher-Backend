@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"phishing-detector/internal/services"
 	"strconv"
@@ -85,9 +84,6 @@ func (h *HistoryExportHandler) GetAnalysisHistory(c *gin.Context, generateUserID
 	userID := c.Query("userId")
 	if userID == "" {
 		userID = generateUserID(c)
-		fmt.Printf("🔑 Generated UserID for history: %s\n", userID)
-	} else {
-		fmt.Printf("🔑 Using provided UserID for history: %s\n", userID)
 	}
 
 	// Create filter
